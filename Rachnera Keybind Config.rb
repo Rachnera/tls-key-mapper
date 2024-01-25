@@ -51,3 +51,7 @@ ConfigScene::Categs.each_key do |key|
   ConfigScene::Categs[key][:max] = 3
 end
 ConfigScene::ListVisual[:padding] = 100
+
+# Lock screen resolution buttons
+System::ButtonRules[:system][:fullscreen][:can_change] = []
+System::ButtonRules[:system][:screenratio][:can_change] = []
