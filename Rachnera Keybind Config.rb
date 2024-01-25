@@ -8,3 +8,28 @@ System::SPath = []
 # Don't reserve keys for (unsupported) mouse-based movement
 System::Defaults[:p1][:f_move] = []
 ConfigScene::Categs[:p1_map][:list].delete(:f_move)
+
+# Hide NOT USED! keys
+[:inventory, :status, :craft, :quest, :cards, :map, :options].each do |key|
+  System::Defaults[:p1][key] = []
+  ConfigScene::Categs[:p1_shortcuts][:list].delete(key)
+end
+
+[:resolution, :qload, :qsave, :help].each do |key|
+  System::Defaults[:system][key] = []
+  ConfigScene::Categs[:system][:list].delete(key)
+end
+
+[:item_1, :item_2, :skill_1, :skill_2, :skill_3, :special].each do |key|
+  System::Defaults[:p1][key] = []
+end
+ConfigScene::Categs.delete(:p1_battlekeys)
+
+System::Defaults[:p1][:mtype] = []
+ConfigScene::Categs[:p1_map][:list].delete(:mtype)
+
+# Hide debug options
+System::Defaults[:system][:debug] = []
+ConfigScene::Categs[:system][:list].delete(:debug)
+System::Defaults[:p1][:d_through] = []
+ConfigScene::Categs[:p1_map][:list].delete(:d_through)

@@ -13,6 +13,3 @@ Add scripts in order:
 - Menu Code
 - Rachnera Mixed Input
 - Rachnera Keybind Config
-
-Some options of the original scripts have been disabled in an attempt to keep things (very relatively) simple, namely:
-- Anything related to using a mouse has been slip under the rug
