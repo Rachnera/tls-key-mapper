@@ -10,6 +10,8 @@ System::Defaults[:p1][:f_confirm] = System::Defaults[:p1][:m_confirm] = [:RETURN
 System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0]
 System::Defaults[:p1][:m_pgdown] = [:LETTER_W,:NEXT]
 
+### Playing nice with other scripts ###
+
 # Repair Yanfly autodash
 class Game_Player < Game_Character
   def dash?
@@ -25,6 +27,30 @@ class Game_Player < Game_Character
   end
 end
 ConfigScene::ButtonHelps[:mmode] = "Hold to dash instead of walking or to walk instead of dashing."
+
+# Repair Hime Message Skip
+class Window_Message < Window_Base
+  def skip_key_pressed?
+    return false if $game_switches[TH::Message_Skip::Disable_Switch]
+
+    return Input.press_ex?($system[:p1][:skip])
+  end
+
+  def input_pause
+    self.pause = true
+    wait(10)
+    Fiber.yield until Input.trigger_ex?($system[:p1][:f_confirm]+$system[:p1][:f_cancel]) || skip_key_pressed?
+    Input.update
+    self.pause = false
+  end
+end
+ConfigScene::Buttons[:skip] = "Fast text"
+ConfigScene::ButtonHelps[:skip] = "Hold to auto-advance text (skips quickly when paired with instant text)."
+System::ButtonRules[:p1][:skip] = {:must_set => true }
+ConfigScene::Categs[:p1_map][:list].push(:skip)
+System::Defaults[:p1][:skip] = [:CONTROL]
+
+### Disable unused options
 
 # Save the config in a file instead of having it been lost every time the game is closed
 System::Reload = false
