@@ -10,6 +10,22 @@ System::Defaults[:p1][:f_confirm] = System::Defaults[:p1][:m_confirm] = [:RETURN
 System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0]
 System::Defaults[:p1][:m_pgdown] = [:LETTER_W,:NEXT]
 
+# Repair Yanfly autodash
+class Game_Player < Game_Character
+  def dash?
+    return false if @move_route_forcing
+    return false if $game_map.disable_dash?
+    return false if vehicle
+
+    dash = false
+    dash = !dash if $game_system.autodash?
+    dash = !dash if Input.press_ex?($system[:p1][:mmode])
+
+    return dash
+  end
+end
+ConfigScene::ButtonHelps[:mmode] = "Hold to dash instead of walking or to walk instead of dashing."
+
 # Save the config in a file instead of having it been lost every time the game is closed
 System::Reload = false
 
