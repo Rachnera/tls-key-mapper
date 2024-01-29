@@ -119,6 +119,23 @@ ConfigScene::Categs.each_key do |key|
 end
 ConfigScene::ListVisual[:padding] = 100
 
-# Lock screen resolution buttons
+### Rework key binding menu ###
+
+# Move field keys first
+
+field_keys = ConfigScene::Categs[:p1_map]
+ConfigScene::Categs.delete(:p1_map)
+ConfigScene::Categs = { :p1_map => field_keys }.merge!(ConfigScene::Categs)
+
+# Move system keys last
+system_keys = ConfigScene::Categs[:system]
+ConfigScene::Categs.delete(:system)
+ConfigScene::Categs[:system] = system_keys
+
+# Lock keys that are only problems in the making if bound differently
 System::ButtonRules[:system][:fullscreen][:can_change] = []
 System::ButtonRules[:system][:screenratio][:can_change] = []
+ConfigScene::Categs[:system][:help] = "Useful, unalterable, system keys."
+
+ConfigScene::Buttons[:m_clear] = "Unbind"
+ConfigScene::ButtonHelps[:m_clear] = "Unassign a key. Used solely in this very configuration screen."
