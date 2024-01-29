@@ -46,9 +46,34 @@ class Window_Message < Window_Base
 end
 ConfigScene::Buttons[:skip] = "Fast text"
 ConfigScene::ButtonHelps[:skip] = "Hold to auto-advance text (skips quickly when paired with instant text)."
-System::ButtonRules[:p1][:skip] = {:must_set => true }
+System::ButtonRules[:p1][:skip] = { :must_set => true }
 ConfigScene::Categs[:p1_map][:list].push(:skip)
 System::Defaults[:p1][:skip] = [:CONTROL]
+
+# Configure Lord Forte VN-style Backlog
+class Scene_Map < Scene_Base
+  alias original_update update
+  def update
+    return original_update unless Input.trigger_ex?($system[:p1][:backlog]) and not @window_log
+
+    @window_log = Window_MessageLog.new
+    update_message_log
+  end
+end
+class Scene_Battle < Scene_Base
+  alias original_update update
+  def update
+    return original_update unless Input.trigger_ex?($system[:p1][:backlog]) and not @window_log
+
+    @window_log = Window_MessageLog.new
+    update_message_log
+  end
+end
+ConfigScene::Buttons[:backlog] = "Backlog"
+ConfigScene::ButtonHelps[:backlog] = "Open VN-style text backlog."
+System::ButtonRules[:p1][:backlog] = { :must_set => true }
+ConfigScene::Categs[:p1_map][:list].push(:backlog)
+System::Defaults[:p1][:backlog] = [:LETTER_D]
 
 ### Disable unused options
 
