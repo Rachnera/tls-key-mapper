@@ -2,10 +2,10 @@
 
 # Use VX Ace standard default values as default
 # Ref: https://forums.rpgmakerweb.com/index.php?threads/rpg-maker-pc-game-controls-mv-vx-ace-vx-xp-2003-2000.140758/
-System::Defaults[:p1][:f_up] = System::Defaults[:p1][:m_up] = [:UP, :NUMPAD8]
-System::Defaults[:p1][:f_down] = System::Defaults[:p1][:m_down] = [:DOWN, :NUMPAD2]
-System::Defaults[:p1][:f_left] = System::Defaults[:p1][:m_left] = [:LEFT, :NUMPAD4]
-System::Defaults[:p1][:f_right] = System::Defaults[:p1][:m_right] = [:RIGHT, :NUMPAD6]
+System::Defaults[:p1][:up] = System::Defaults[:p1][:f_up] = System::Defaults[:p1][:m_up] = [:UP, :NUMPAD8]
+System::Defaults[:p1][:down] = System::Defaults[:p1][:f_down] = System::Defaults[:p1][:m_down] = [:DOWN, :NUMPAD2]
+System::Defaults[:p1][:left] = System::Defaults[:p1][:f_left] = System::Defaults[:p1][:m_left] = [:LEFT, :NUMPAD4]
+System::Defaults[:p1][:right] = System::Defaults[:p1][:f_right] = System::Defaults[:p1][:m_right] = [:RIGHT, :NUMPAD6]
 System::Defaults[:p1][:f_confirm] = System::Defaults[:p1][:m_confirm] = [:RETURN, :SPACE]
 System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0]
 System::Defaults[:p1][:m_pgdown] = [:LETTER_W,:NEXT]
@@ -141,7 +141,6 @@ ConfigScene::ListVisual[:padding] = 100
 ### Rework key binding menu ###
 
 # Move field keys first
-
 field_keys = ConfigScene::Categs[:p1_map]
 ConfigScene::Categs.delete(:p1_map)
 ConfigScene::Categs = { :p1_map => field_keys }.merge!(ConfigScene::Categs)
@@ -156,5 +155,56 @@ System::ButtonRules[:system][:fullscreen][:can_change] = []
 System::ButtonRules[:system][:screenratio][:can_change] = []
 ConfigScene::Categs[:system][:help] = "Useful, unalterable, system keys."
 
+# Better (?) descriptions
 ConfigScene::Buttons[:m_clear] = "Unbind"
 ConfigScene::ButtonHelps[:m_clear] = "Unassign a key. Used solely in this very configuration screen."
+
+# Configure movement/confirm/cancel only once
+general_keys = {
+  :name => "General",
+  :help => "Main keys.",
+  :list => [],
+  :max => 3,
+  :type => :buttons,
+  :setting => [:p1],
+}
+ConfigScene::Categs = { :p1_main => general_keys }.merge!(ConfigScene::Categs)
+
+module MultiKeyBind
+  FusedKeys = {
+    :up => { :name => "Up", :description => "Move character/cursor upward.", :supersede => [:f_up, :m_up] },
+    :down => { :name => "Down", :description => "Move character/cursor downward.", :supersede => [:f_down, :m_down] },
+    :left => { :name => "Left", :description => "Move character/cursor leftward.", :supersede => [:f_left, :m_left] },
+    :right => { :name => "Right", :description => "Move character/cursor rightward.", :supersede => [:f_right, :m_right] },
+  }
+
+  FusedKeys.each do |key, cf|
+    ConfigScene::Buttons[key] = cf[:name]
+    ConfigScene::ButtonHelps[key] = cf[:description]
+    System::ButtonRules[:p1][key] = { :must_set => true }
+    ConfigScene::Categs[:p1_main][:list].push(key)
+
+    # Hide superseded keys
+    cf[:supersede].each do |key|
+      ConfigScene::Categs.each_key do |cat|
+        ConfigScene::Categs[cat][:list].delete(key)
+      end
+    end
+  end
+end
+
+class Window_ConfigPop < Window_Base
+  alias_method :original_change_the_buttons, :change_the_buttons
+
+  def change_the_buttons
+    original_change_the_buttons
+
+    if MultiKeyBind::FusedKeys.has_key?(@funct)
+      MultiKeyBind::FusedKeys[@funct][:supersede].each do |key|
+        # I have no idea how this works
+        path = @list_data[:setting]+[key]
+        System.nest($system,*path)
+      end
+    end
+  end
+end
