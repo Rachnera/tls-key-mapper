@@ -1,5 +1,5 @@
 # Foolish attempt at merging Lone Wolf, Cidiomar and Sixth's work to fully support both keyboard an gamepad
-# Overidde VX Ace default Input
+# Override VX Ace default Input
 
 module GamepadKeyboardGlue
   def self.gamepad(method, keys)
