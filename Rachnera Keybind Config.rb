@@ -75,6 +75,25 @@ System::ButtonRules[:p1][:backlog] = { :must_set => true }
 ConfigScene::Categs[:p1_map][:list].push(:backlog)
 System::Defaults[:p1][:backlog] = [:LETTER_D]
 
+# Retro-compatibility with existing party swap code
+module Input
+  class << self
+    alias_method :original_press?, :press?
+  end
+
+  def self.press?(keys)
+    # 18 -> R button, cf EventsKeyCodes in Cidiomar's Input System
+    return self.press_ex?($system[:p1][:party_switch]) if keys == 18
+
+    original_press?(keys)
+  end
+end
+ConfigScene::Buttons[:party_switch] = "Party switch"
+ConfigScene::ButtonHelps[:party_switch] = "Used in some specific events only."
+System::ButtonRules[:p1][:party_switch] = { :must_set => true }
+ConfigScene::Categs[:p1_map][:list].push(:party_switch)
+System::Defaults[:p1][:party_switch] = [:LETTER_W]
+
 ### Disable unused options
 
 # Save the config in a file instead of having it been lost every time the game is closed
