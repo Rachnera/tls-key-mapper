@@ -46,7 +46,7 @@ class Window_Message < Window_Base
 end
 ConfigScene::Buttons[:skip] = "Fast text"
 ConfigScene::ButtonHelps[:skip] = "Hold to auto-advance text (skips quickly when paired with instant text)."
-System::ButtonRules[:p1][:skip] = { :must_set => true }
+System::ButtonRules[:p1][:skip] = { :must_set => true, :same_key => System::PresetRules[:field1] }
 ConfigScene::Categs[:p1_map][:list].push(:skip)
 System::Defaults[:p1][:skip] = [:CONTROL]
 
@@ -71,7 +71,7 @@ class Scene_Battle < Scene_Base
 end
 ConfigScene::Buttons[:backlog] = "Backlog"
 ConfigScene::ButtonHelps[:backlog] = "Open VN-style text backlog."
-System::ButtonRules[:p1][:backlog] = { :must_set => true }
+System::ButtonRules[:p1][:backlog] = { :must_set => true, :same_key => System::PresetRules[:field1] }
 ConfigScene::Categs[:p1_map][:list].push(:backlog)
 System::Defaults[:p1][:backlog] = [:LETTER_D]
 

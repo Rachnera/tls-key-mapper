@@ -16,4 +16,3 @@ Add scripts in order:
 
 Known caveats:
 - Completely override anything defined through the F1 menu.
-- Configuration of custom keys has yet to be finely tuned to allow re-using the key for something else under different circumstances.
