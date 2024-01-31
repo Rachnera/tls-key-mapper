@@ -48,7 +48,7 @@ Similar to previous, but with `System::Defaults[:p1]`:
 System::Defaults[:p1][:backlog] = [:LETTER_B]
 ```
 
-Reminder: Default values are only used if no `Controls.rvdata2` exists yet!
+Reminder: Default values are only used if no `Controls.rvdata2` file exists yet, or when Reset Options is called.
 
 ## Credits
 

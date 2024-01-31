@@ -147,6 +147,7 @@ end
 
 class Scene_System < Scene_MenuBase
   alias_method :original_create_command_window, :create_command_window
+  alias_method :original_command_reset_opts, :command_reset_opts
 
   def create_command_window
     original_create_command_window
@@ -155,6 +156,13 @@ class Scene_System < Scene_MenuBase
 
   def command_keyboard
      SceneManager.call(ConfScene)
+  end
+
+  def command_reset_opts
+    System.load_defaults
+    save_data($system, System.check_sys_file)
+
+    original_command_reset_opts
   end
 end
 
