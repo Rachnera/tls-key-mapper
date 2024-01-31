@@ -8,7 +8,7 @@ System::Defaults[:p1][:left] = System::Defaults[:p1][:f_left] = System::Defaults
 System::Defaults[:p1][:right] = System::Defaults[:p1][:f_right] = System::Defaults[:p1][:m_right] = [:RIGHT, :NUMPAD6]
 System::Defaults[:p1][:confirm] = System::Defaults[:p1][:f_confirm] = System::Defaults[:p1][:m_confirm] = [:RETURN, :SPACE]
 System::Defaults[:p1][:cancel] = System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0]
-System::Defaults[:p1][:m_pgdown] = [:LETTER_W,:NEXT]
+System::Defaults[:p1][:m_pgdown] = [:LETTER_W, :NEXT]
 
 ### Playing nice with other scripts ###
 
@@ -158,6 +158,7 @@ ConfigScene::Categs[:system][:help] = "Useful, unalterable, system keys."
 # Better (?) descriptions
 ConfigScene::Buttons[:m_clear] = "Unbind"
 ConfigScene::ButtonHelps[:m_clear] = "Unassign a key. Used solely in this very configuration screen."
+ConfigScene::ButtonHelps[:m_toggle] += "\nOnly used in shops."
 
 # Configure movement/confirm/cancel only once
 general_keys = {
