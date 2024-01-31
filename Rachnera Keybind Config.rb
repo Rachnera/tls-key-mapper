@@ -158,6 +158,16 @@ class Scene_System < Scene_MenuBase
   end
 end
 
+# Remove default call from main menu
+class Window_MenuCommand < Window_Command
+  alias_method :original_make_command_list, :make_command_list
+
+  def make_command_list
+    original_make_command_list
+    @list.reject! { |command| command[:symbol] == :controls }
+  end
+end
+
 ### Disable unused options
 
 # Save the config in a file instead of having it been lost every time the game is closed
