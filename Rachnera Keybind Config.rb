@@ -94,6 +94,70 @@ System::ButtonRules[:p1][:party_switch] = { :must_set => true }
 ConfigScene::Categs[:p1_map][:list].push(:party_switch)
 System::Defaults[:p1][:party_switch] = [:LETTER_W]
 
+# Integrate with Yanfly config menu
+YEA::SYSTEM::COMMANDS.insert(YEA::SYSTEM::COMMANDS.find_index(:reset_opts), :keyboard)
+YEA::SYSTEM::COMMAND_VOCAB[:keyboard] = ["Keyboard Settings", "None", "None", "Bind controls to different/additional keys."]
+
+class Window_SystemOptions < Window_Command
+  alias_method :original_ok_enabled?, :ok_enabled?
+  alias_method :original_draw_item, :draw_item
+
+  def ok_enabled?
+    return true if current_symbol == :keyboard
+    original_ok_enabled?
+  end
+
+  def draw_item(index)
+    if @list[index][:symbol] == :keyboard
+      reset_font_settings
+      rect = item_rect(index)
+      contents.clear_rect(rect)
+      return draw_text(item_rect_for_text(index), command_name(index), 1)
+    end
+
+    original_draw_item(index)
+  end
+
+  def make_command_list
+    @help_descriptions = {}
+    for command in YEA::SYSTEM::COMMANDS
+      case command
+      when :blank
+        add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
+        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+      when :window_red, :window_grn, :window_blu
+        add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
+        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+      when :volume_bgm, :volume_bgs, :volume_sfx
+        add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
+        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+      when :autodash, :instantmsg, :animations
+        add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
+        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+      when :reset_opts, :to_title, :shutdown, :keyboard
+        add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
+        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+      else
+        process_custom_switch(command)
+        process_custom_variable(command)
+      end
+    end
+  end
+end
+
+class Scene_System < Scene_MenuBase
+  alias_method :original_create_command_window, :create_command_window
+
+  def create_command_window
+    original_create_command_window
+    @command_window.set_handler(:keyboard, method(:command_keyboard))
+  end
+
+  def command_keyboard
+     SceneManager.call(ConfScene)
+  end
+end
+
 ### Disable unused options
 
 # Save the config in a file instead of having it been lost every time the game is closed
