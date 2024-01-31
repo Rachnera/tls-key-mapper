@@ -6,8 +6,8 @@ System::Defaults[:p1][:up] = System::Defaults[:p1][:f_up] = System::Defaults[:p1
 System::Defaults[:p1][:down] = System::Defaults[:p1][:f_down] = System::Defaults[:p1][:m_down] = [:DOWN, :NUMPAD2]
 System::Defaults[:p1][:left] = System::Defaults[:p1][:f_left] = System::Defaults[:p1][:m_left] = [:LEFT, :NUMPAD4]
 System::Defaults[:p1][:right] = System::Defaults[:p1][:f_right] = System::Defaults[:p1][:m_right] = [:RIGHT, :NUMPAD6]
-System::Defaults[:p1][:f_confirm] = System::Defaults[:p1][:m_confirm] = [:RETURN, :SPACE]
-System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0]
+System::Defaults[:p1][:confirm] = System::Defaults[:p1][:f_confirm] = System::Defaults[:p1][:m_confirm] = [:RETURN, :SPACE]
+System::Defaults[:p1][:cancel] = System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0]
 System::Defaults[:p1][:m_pgdown] = [:LETTER_W,:NEXT]
 
 ### Playing nice with other scripts ###
@@ -176,6 +176,8 @@ module MultiKeyBind
     :down => { :name => "Down", :description => "Move character/cursor downward.", :supersede => [:f_down, :m_down] },
     :left => { :name => "Left", :description => "Move character/cursor leftward.", :supersede => [:f_left, :m_left] },
     :right => { :name => "Right", :description => "Move character/cursor rightward.", :supersede => [:f_right, :m_right] },
+    :confirm => { :name => "Interact/Select", :description => "The key used for basically anything as a default.", :supersede => [:f_confirm, :m_confirm] },
+    :cancel => { :name => "Cancel/Menu", :description => "Cancel, go back, exit.\nAlso open the menu.", :supersede => [:f_cancel, :m_cancel, :m_menu] },
   }
 
   FusedKeys.each do |key, cf|
@@ -193,18 +195,4 @@ module MultiKeyBind
   end
 end
 
-class Window_ConfigPop < Window_Base
-  alias_method :original_change_the_buttons, :change_the_buttons
-
-  def change_the_buttons
-    original_change_the_buttons
-
-    if MultiKeyBind::FusedKeys.has_key?(@funct)
-      MultiKeyBind::FusedKeys[@funct][:supersede].each do |key|
-        # I have no idea how this works
-        path = @list_data[:setting]+[key]
-        System.nest($system,*path)
-      end
-    end
-  end
-end
+ConfigScene::Categs.delete(:p1_shortcuts)
