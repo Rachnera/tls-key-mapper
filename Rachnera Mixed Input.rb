@@ -5,14 +5,14 @@ module GamepadKeyboardGlue
   def self.gamepad(method, keys)
     return false unless WolfPad.plugged_in?
 
-    return WolfPad.send(method, GamepadKeyboardGlue.convert(keys))
+    Array(GamepadKeyboardGlue.convert(keys)).any? { |key| WolfPad.send(method, key) }
   end
 
   def self.convert(key)
-    return :UP if self.is_any(key, [:f_up, :m_up])
-    return :DOWN if self.is_any(key, [:f_down, :m_down])
-    return :LEFT if self.is_any(key, [:f_left, :m_left])
-    return :RIGHT if self.is_any(key, [:f_right, :m_right])
+    return [:UP, :L_UP] if self.is_any(key, [:f_up, :m_up])
+    return [:DOWN, :L_DOWN] if self.is_any(key, [:f_down, :m_down])
+    return [:LEFT, :L_LEFT] if self.is_any(key, [:f_left, :m_left])
+    return [:RIGHT, :L_RIGHT] if self.is_any(key, [:f_right, :m_right])
 
     return PadConfig.confirm if self.is_any(key, [:f_confirm, :m_confirm])
     return PadConfig.cancel if self.is_any(key, [:f_cancel, :m_cancel])
