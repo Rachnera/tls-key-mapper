@@ -100,18 +100,24 @@ GamepadKeyboardGlue::Defaults[:party_switch] = :R1
 YEA::SYSTEM::COMMANDS.insert(YEA::SYSTEM::COMMANDS.find_index(:reset_opts), :keyboard)
 YEA::SYSTEM::COMMAND_VOCAB[:keyboard] = ["Keyboard Settings", "None", "None", "Bind controls to different/additional keys."]
 
+YEA::SYSTEM::COMMANDS.insert(YEA::SYSTEM::COMMANDS.find_index(:reset_opts), :gamepad)
+YEA::SYSTEM::COMMAND_VOCAB[:gamepad] = ["Gamepad Settings", "None", "None", "Rebind gamepad buttons.\nRequires a pad to be plugged."]
+
 class Window_SystemOptions < Window_Command
   alias_method :original_ok_enabled?, :ok_enabled?
   alias_method :original_draw_item, :draw_item
 
   def ok_enabled?
     return true if current_symbol == :keyboard
+    return true if current_symbol == :gamepad and WolfPad.plugged_in?
+
     original_ok_enabled?
   end
 
   def draw_item(index)
-    if @list[index][:symbol] == :keyboard
+    if [:keyboard, :gamepad].include?(@list[index][:symbol])
       reset_font_settings
+      change_color(normal_color, false) if @list[index][:symbol] == :gamepad and not WolfPad.plugged_in?
       rect = item_rect(index)
       contents.clear_rect(rect)
       return draw_text(item_rect_for_text(index), command_name(index), 1)
@@ -136,7 +142,7 @@ class Window_SystemOptions < Window_Command
       when :autodash, :instantmsg, :animations
         add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
         @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
-      when :reset_opts, :to_title, :shutdown, :keyboard
+      when :reset_opts, :to_title, :shutdown, :keyboard, :gamepad
         add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
         @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
       else
@@ -154,10 +160,15 @@ class Scene_System < Scene_MenuBase
   def create_command_window
     original_create_command_window
     @command_window.set_handler(:keyboard, method(:command_keyboard))
+    @command_window.set_handler(:gamepad, method(:command_gamepad))
   end
 
   def command_keyboard
      SceneManager.call(ConfScene)
+  end
+
+  def command_gamepad
+     SceneManager.call(Scene_GamepadConfig)
   end
 
   def command_reset_opts

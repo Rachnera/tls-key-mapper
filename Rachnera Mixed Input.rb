@@ -136,3 +136,23 @@ module Input
     return @dir8
   end
 end
+
+class Scene_GamepadConfig < Scene_Base
+  def start
+    super
+    init_main_win
+  end
+
+  def init_main_win
+    @window = Window_GamepadConfig.new(0, 0)
+    @window.set_handler(:cancel, method(:on_cancel))
+  end
+
+  def on_cancel
+    return_scene
+  end
+end
+
+class Window_GamepadConfig < Window_Command
+  #TODO
+end
