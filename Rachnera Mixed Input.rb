@@ -9,6 +9,11 @@ module GamepadKeyboardGlue
   end
 
   def self.convert(key)
+    return :UP if self.is_any(key, [:f_up, :m_up])
+    return :DOWN if self.is_any(key, [:f_down, :m_down])
+    return :LEFT if self.is_any(key, [:f_left, :m_left])
+    return :RIGHT if self.is_any(key, [:f_right, :m_right])
+
     return PadConfig.confirm if self.is_any(key, [:f_confirm, :m_confirm])
     return PadConfig.cancel if self.is_any(key, [:f_cancel, :m_cancel])
     return PadConfig.menu if self.is_any(key, [:m_menu])
