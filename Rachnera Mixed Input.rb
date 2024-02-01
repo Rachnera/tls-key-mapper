@@ -2,10 +2,26 @@
 # Override VX Ace default Input
 
 module GamepadKeyboardGlue
-  def self.gamepad(method, keys)
+  # Use VX Ace standard default values as default
+  # Ref: https://forums.rpgmakerweb.com/index.php?threads/rpg-maker-pc-game-controls-mv-vx-ace-vx-xp-2003-2000.140758/
+  Defaults = {
+    :confirm => :A,
+    :cancel => :B,
+    :m_menu => :Y,
+    :mmode => :X,
+    :m_pgup => :L1,
+    :m_pgdown => :R1,
+  }
+
+  def self.bindings
+    # TODO Give the ability to configure this
+    Defaults
+  end
+
+  def self.gamepad(method, key)
     return false unless WolfPad.plugged_in?
 
-    Array(GamepadKeyboardGlue.convert(keys)).any? { |key| WolfPad.send(method, key) }
+    Array(GamepadKeyboardGlue.convert(key)).any? { |k| WolfPad.send(method, k) }
   end
 
   def self.convert(key)
@@ -14,12 +30,12 @@ module GamepadKeyboardGlue
     return [:LEFT, :L_LEFT] if self.is_any(key, [:f_left, :m_left])
     return [:RIGHT, :L_RIGHT] if self.is_any(key, [:f_right, :m_right])
 
-    return PadConfig.confirm if self.is_any(key, [:f_confirm, :m_confirm])
-    return PadConfig.cancel if self.is_any(key, [:f_cancel, :m_cancel])
-    return PadConfig.menu if self.is_any(key, [:m_menu])
-    return PadConfig.page_up if self.is_any(key, [:m_pgup])
-    return PadConfig.page_down if self.is_any(key, [:m_pgdown])
-    return PadConfig.dash if self.is_any(key, [:mmode])
+    return self.bindings[:confirm] if self.is_any(key, [:f_confirm, :m_confirm])
+    return self.bindings[:cancel] if self.is_any(key, [:f_cancel, :m_cancel])
+
+    self.bindings.each do |binding, button|
+      return button if self.is_any(key, [binding])
+    end
 
     nil
   end
