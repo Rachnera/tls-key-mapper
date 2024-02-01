@@ -5,10 +5,9 @@ module GamepadKeyboardGlue
   # Use VX Ace standard default values as default
   # Ref: https://forums.rpgmakerweb.com/index.php?threads/rpg-maker-pc-game-controls-mv-vx-ace-vx-xp-2003-2000.140758/
   Defaults = {
-    :confirm => :A,
+    :confirm => :X,
     :cancel => :B,
-    :m_menu => :Y,
-    :mmode => :X,
+    :mmode => :A,
     :m_pgup => :L1,
     :m_pgdown => :R1,
   }
@@ -31,7 +30,7 @@ module GamepadKeyboardGlue
     return [:RIGHT, :L_RIGHT] if self.is_any(key, [:f_right, :m_right])
 
     return self.bindings[:confirm] if self.is_any(key, [:f_confirm, :m_confirm])
-    return self.bindings[:cancel] if self.is_any(key, [:f_cancel, :m_cancel])
+    return self.bindings[:cancel] if self.is_any(key, [:f_cancel, :m_cancel, :m_menu])
 
     self.bindings.each do |binding, button|
       return button if self.is_any(key, [binding])
