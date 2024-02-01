@@ -123,14 +123,14 @@ module Input
   end
 
   def self.dir4
-    return WolfPad.dir4 if WolfPad.plugged_in?
+    return WolfPad.dir4 if WolfPad.plugged_in? and WolfPad.dir4 > 0
 
     @dir4 = 0 if @dir4.nil?
     return @dir4
   end
 
   def self.dir8
-    return WolfPad.dir8 if WolfPad.plugged_in?
+    return WolfPad.dir8 if WolfPad.plugged_in? and WolfPad.dir8 > 0
 
     @dir8 = 0 if @dir8.nil?
     return @dir8
