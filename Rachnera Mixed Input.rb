@@ -110,7 +110,7 @@ module Input
   end
 
   def self.dir8
-    return WolfPad.plugged_in? if WolfPad.dir8
+    return WolfPad.dir8 if WolfPad.plugged_in?
 
     @dir8 = 0 if @dir8.nil?
     return @dir8
