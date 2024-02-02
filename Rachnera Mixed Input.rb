@@ -394,22 +394,26 @@ class Window_GamepadConfigPop < Window_Base
         new_bindings = $gamepad_bindings.clone
         new_bindings[feature] = new_button
 
-        if valid_bindings(new_bindings)
-          $gamepad_bindings = new_bindings.clone
-          @list_win.set_data($gamepad_bindings)
-          Sound.play_ok
-          pop_over
-        else
-          Sound.play_buzzer
-          @type = :error_message
-          @error_data = { :new_button => new_button }
-          refresh
+        return set_new_bindings(new_bindings) if valid_bindings?(new_bindings)
+
+        # Bind others features currently bound to the new button to the old button
+        new_bindings.each do |other_feature, button|
+          next if feature == other_feature
+          next if button != new_button
+          new_bindings[other_feature] = old_button
         end
+
+        return set_new_bindings(new_bindings) if valid_bindings?(new_bindings)
+
+        Sound.play_buzzer
+        @type = :error_message
+        @error_data = { :new_button => new_button }
+        refresh
       end
     end
   end
 
-  def valid_bindings(bindings)
+  def valid_bindings?(bindings)
     bindings.each do |feature, button|
       bindings.each do |other_feature, other_button|
         next if feature == other_feature
@@ -422,6 +426,13 @@ class Window_GamepadConfigPop < Window_Base
     end
 
     return true
+  end
+
+  def set_new_bindings(new_bindings)
+    $gamepad_bindings = new_bindings.clone
+    @list_win.set_data($gamepad_bindings)
+    Sound.play_ok
+    pop_over
   end
 
   def error_message
