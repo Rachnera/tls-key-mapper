@@ -2,7 +2,7 @@
 
 ## Setup
 
-Definitely not plug-and-play. Unless you happen to be adding this feature to exactly _The Last Sovereign_. In which case you "just" need to add the ten (!) scripts stored in that repository to your game, after all other custom scripts and in that exact order:
+Definitely not plug-and-play. Unless you happen to be adding this feature to exactly _The Last Sovereign_. In which case you "just" need to add the ten (!) scripts stored in that repository to the game, after all other custom scripts and in that exact order:
 1. Lone Wolf Gamepad Extender
 2. System Settings - Cidiomar
 3. Vocab Settings - Cidiomar
@@ -18,7 +18,7 @@ Definitely not plug-and-play. Unless you happen to be adding this feature to exa
 
 ### What does it do?
 
-Once the scripts in, you should see two additional entries within the System Menu:
+Once the scripts are in, you should see two additional entries within the System menu:
 
 ![](/docs/options.jpg)
 
@@ -32,7 +32,7 @@ And the second to Lone Wolf and mine equivalent for the gamepad:
 
 Usage should be straightforward. If it's not, it means I still have work to do to make it so.
 
-The system creates two new custom save files to keep track of any custom configuration, namely `Controls.rvdata2` and `Gamepad.rvdata2`. Bindings can be reset to their default values by deleting these files or by using the in-game Reset Options command.
+This system creates two new custom save files to keep track of any custom configuration, namely `Controls.rvdata2` and `Gamepad.rvdata2`. Bindings can be reset to their default values by deleting these files or by using the in-game Reset Options command.
 
 ### What doesn't it do?
 
@@ -42,11 +42,13 @@ At the moment, the following caveats are known:
 ## Customization
 
 If you wish to modify a button's name, description, usage, anything really, you first need to know its [symbolic](https://ruby-doc.org/core-1.9.1/Symbol.html) name. Here's the list of all currently in use:
+```
 :up, :down, :left, :right, :confirm, :cancel, :fullscreen (F5), :screenratio (F6), :mmode (walk/dash), :skip (fast text), :backlog, :party_switch, :m_toggle (only used in the shop screen; tab as a default), :m_clear (clear assigned key; only used in the keybinding menu)
+```
 
 ### Text
 
-Most text displayed in the new menu can be changed by altering either `ConfigScene::Buttons` or `ConfigScene::ButtonHelps` for the appropriate button.
+Most text displayed in the new menus can be changed by altering either `ConfigScene::Buttons` or `ConfigScene::ButtonHelps` for the appropriate button.
 
 Example:
 ```rb
@@ -56,9 +58,8 @@ ConfigScene::ButtonHelps[:screenratio] = "Better explanation of what F6 does."
 
 ### Defaults
 
-Similar to previous, but with `System::Defaults[:p1]` and `GamepadKeyboardGlue::Defaults`:
+Default bindings can similarly be configured, but by tinkering with `System::Defaults[:p1]` and `GamepadKeyboardGlue::Defaults` instead:
 ```rb
-# Change the backlog to the B button as a default
 System::Defaults[:p1][:backlog] = [:LETTER_B]
 GamepadKeyboardGlue::Defaults[:party_switch] = :R2
 ```
@@ -67,6 +68,6 @@ If a default is changed and a save file already exists, the save file will take 
 
 ## Credits
 
-Based on:
+Wouldn't have been possible without:
 - https://forums.rpgmakerweb.com/index.php?threads/control-configuration-system-v1-5-04-07-2017.70517/
 - https://forums.rpgmakerweb.com/index.php?threads/gamepad-extender-v1-1-2-20-2015.1284/
