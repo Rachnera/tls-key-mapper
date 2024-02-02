@@ -177,7 +177,7 @@ class Scene_System < Scene_MenuBase
     System.load_defaults
     save_data($system, System.check_sys_file)
 
-    # TODO Also reset gamepad
+    System.reset_gamepad_bindings
 
     original_command_reset_opts
   end

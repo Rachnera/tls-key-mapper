@@ -464,4 +464,9 @@ module System
   def self.save_gamepad_bindings
     save_data($gamepad_bindings, GamepadKeyboardGlue::File)
   end
+
+  def self.reset_gamepad_bindings
+    $gamepad_bindings = GamepadKeyboardGlue::Defaults.clone
+    save_gamepad_bindings
+  end
 end
