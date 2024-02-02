@@ -18,6 +18,8 @@ module GamepadKeyboardGlue
     :m_pgdown => :menu_only,
   }
 
+  File = 'Gamepad.rvdata2'
+
   def self.bindings
     $gamepad_bindings
   end
@@ -156,6 +158,7 @@ class Scene_GamepadConfig < Scene_Base
   end
 
   def on_cancel
+    System.save_gamepad_bindings
     return_scene
   end
 
@@ -451,7 +454,14 @@ module System
   def self.init
     original_init
 
-    # TODO Save and load from file
     $gamepad_bindings = GamepadKeyboardGlue::Defaults.clone
+    file = GamepadKeyboardGlue::File
+    if File.exist?(file)
+      $gamepad_bindings.merge!(load_data(file))
+    end
+  end
+
+  def self.save_gamepad_bindings
+    save_data($gamepad_bindings, GamepadKeyboardGlue::File)
   end
 end
