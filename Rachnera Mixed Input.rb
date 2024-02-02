@@ -12,6 +12,12 @@ module GamepadKeyboardGlue
     :m_pgdown => :R1,
   }
 
+  Scopes = {
+    :mmode => :field_only,
+    :m_pgup => :menu_only,
+    :m_pgdown => :menu_only,
+  }
+
   def self.bindings
     $gamepad_bindings
   end
@@ -260,12 +266,17 @@ class Window_GamepadConfig < Window_Command
     txt = ConfigScene::ButtonHelps[current_ext[:feature]]
     @help_window.refresh(txt)
   end
+
+  def set_data(data)
+    @data = data
+    refresh
+  end
 end
 
 class Window_GamepadConfigPop < Window_Base
   MSGS = {
     :wait_for_key => "Press the button you wish to bind to the \eC[1]\eFNCTN\eC[0] function!",
-    :error_message => "TODO",
+    :error_message => "Could not bind button \eC[1]%new_button%\eC[0] to the \eC[1]\eFNCTN\eC[0] function.\n Try changing another binding first.",
   }
 
   def initialize(list_win, type)
@@ -298,6 +309,11 @@ class Window_GamepadConfigPop < Window_Base
     kfunct = ConfigScene::Buttons[@funct[:feature]] # interact/cancel/etc
     txt = Window_GamepadConfigPop::MSGS[@type].clone
     txt.gsub!(/\eFNCTN/i) { kfunct }
+    if @error_data
+      @error_data.each do |key, value|
+        txt.gsub!(/%#{key.to_s}%/, value.to_s)
+      end
+    end
     return txt
   end
 
@@ -373,17 +389,44 @@ class Window_GamepadConfigPop < Window_Base
       if WolfPad.trigger?(key)
         # TODO Check if no conflict
         feature = @funct[:feature]
-        $gamepad_bindings[feature] = key
-        Sound.play_ok
-        @list_win.refresh
-        pop_over
+        old_button = @funct[:button]
+        new_button = key
+        new_bindings = $gamepad_bindings.clone
+        new_bindings[feature] = new_button
+
+        if valid_bindings(new_bindings)
+          $gamepad_bindings = new_bindings.clone
+          @list_win.set_data($gamepad_bindings)
+          Sound.play_ok
+          pop_over
+        else
+          Sound.play_buzzer
+          @type = :error_message
+          @error_data = { :new_button => new_button }
+          refresh
+        end
       end
     end
   end
 
+  def valid_bindings(bindings)
+    bindings.each do |feature, button|
+      bindings.each do |other_feature, other_button|
+        next if feature == other_feature
+        next if button != other_button
+        next if GamepadKeyboardGlue::Scopes[feature] == :field_only and GamepadKeyboardGlue::Scopes[other_feature] == :menu_only
+        next if GamepadKeyboardGlue::Scopes[feature] == :menu_only and GamepadKeyboardGlue::Scopes[other_feature] == :field_only
+
+        return false
+      end
+    end
+
+    return true
+  end
+
   def error_message
-    if Input.trigger_ex?($system[:p1][:m_confirm])
-      Sound.play_ok
+    if Input.trigger_ex?($system[:p1][:m_confirm]) or Input.trigger_ex?($system[:p1][:m_cancel])
+      @error_data = nil
       pop_over
       @list_win.activate
     end

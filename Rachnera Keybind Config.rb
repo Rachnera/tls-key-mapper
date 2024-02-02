@@ -50,6 +50,7 @@ System::ButtonRules[:p1][:skip] = { :must_set => true, :same_key => System::Pres
 ConfigScene::Categs[:p1_map][:list].push(:skip)
 System::Defaults[:p1][:skip] = [:CONTROL]
 GamepadKeyboardGlue::Defaults[:skip] = :L1
+GamepadKeyboardGlue::Scopes[:skip] = :field_only
 
 # Configure Lord Forte VN-style Backlog
 class Scene_Map < Scene_Base
@@ -95,6 +96,7 @@ System::ButtonRules[:p1][:party_switch] = { :must_set => true }
 ConfigScene::Categs[:p1_map][:list].push(:party_switch)
 System::Defaults[:p1][:party_switch] = [:LETTER_W]
 GamepadKeyboardGlue::Defaults[:party_switch] = :R1
+GamepadKeyboardGlue::Scopes[:party_switch] = :field_only
 
 # Integrate with Yanfly config menu
 YEA::SYSTEM::COMMANDS.insert(YEA::SYSTEM::COMMANDS.find_index(:reset_opts), :keyboard)
