@@ -387,7 +387,6 @@ class Window_GamepadConfigPop < Window_Base
   def waiting_for_key_press
     [:A, :B, :X, :Y, :L1, :R1, :START, :SELECT, :L2, :R2].any? do |key|
       if WolfPad.trigger?(key)
-        # TODO Check if no conflict
         feature = @funct[:feature]
         old_button = @funct[:button]
         new_button = key
