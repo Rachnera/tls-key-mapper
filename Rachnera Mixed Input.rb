@@ -230,7 +230,7 @@ class Window_GamepadConfig < Window_Command
 
   def make_command_list
     @data.each do |key, btn|
-      add_command(btn.to_s, key, true, { :feature => key, :button => btn })
+      add_command(btn.to_s, ('feature_' + key.to_s).to_sym, true, { :feature => key, :button => btn })
     end
   end
 
