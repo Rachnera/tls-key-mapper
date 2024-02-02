@@ -13,8 +13,7 @@ module GamepadKeyboardGlue
   }
 
   def self.bindings
-    # TODO Give the ability to configure this
-    Defaults
+    $gamepad_bindings
   end
 
   def self.gamepad(method, key)
@@ -144,7 +143,7 @@ class Scene_GamepadConfig < Scene_Base
   end
 
   def init_main_win
-    @window = Window_GamepadConfig.new(0, 0)
+    @window = Window_GamepadConfig.new
     @window.set_handler(:cancel, method(:on_cancel))
   end
 
@@ -153,6 +152,92 @@ class Scene_GamepadConfig < Scene_Base
   end
 end
 
+# Heavily copy-pasted from Sixth's code, some lines might be dead branches I forgot to prune
 class Window_GamepadConfig < Window_Command
-  #TODO
+    attr_accessor :data
+
+  def initialize()
+    @data = $gamepad_bindings
+    @grps_data = ConfigScene::Windows[:list]
+    xx = GrPS.get(@grps_data[:pos][0])
+    yy = GrPS.get(@grps_data[:pos][1])
+    super(xx,yy)
+    activate
+    select(0)
+    self.opacity = ConfigScene::Windows[:list][:opa]
+    self.z = ConfigScene::Windows[:list][:z]
+    self.windowskin = Cache.system(ConfigScene::Windows[:list][:skin])
+  end
+
+  def window_width
+    return GrPS.get(@grps_data[:size][0])
+  end
+
+  def window_height
+    return GrPS.get(@grps_data[:size][1])
+  end
+
+  def item_width
+    full = width - standard_padding * 2 + spacing
+    mod = GrPS.get(ConfigScene::ListVisual[:padding])
+    return full - mod - spacing * 2
+  end
+
+  def item_rect(index)
+    rect = Rect.new
+    rect.width = item_width
+    rect.height = item_height
+    mod = GrPS.get(ConfigScene::ListVisual[:padding])
+    rect.x = mod + spacing
+    rect.y = index * item_height
+    rect
+  end
+
+  def make_command_list
+    @data.each do |key, btn|
+      add_command(btn.to_s, key, true, btn)
+    end
+  end
+
+  def draw_item(index)
+    rct = item_rect(index)
+    draw_key_buttons(index,rct)
+  end
+
+  def draw_key_buttons(index, rect)
+    color = ConfigScene::ListVisual[:boxes][:keys]
+    draw_back_box(rect.x, rect.y+1, rect.width, rect.height-2, color)
+    set_font_opts(ConfigScene::ListVisual[:font][:keys])
+    draw_text(item_rect_for_text(index), command_name(index), alignment)
+  end
+
+  def refresh
+    super
+    draw_button_names
+  end
+
+  def draw_button_names
+    mod = GrPS.get(ConfigScene::ListVisual[:padding])
+    set_font_opts(ConfigScene::ListVisual[:font][:names])
+    @data.each_with_index do |(key, btn), i|
+      yy = i * item_height
+      color = ConfigScene::ListVisual[:boxes][:names]
+      draw_back_box(0,yy+1,mod,item_height-2,color)
+      txt = ConfigScene::Buttons[key]
+      draw_text(4,yy,mod-8,item_height,txt)
+    end
+  end
+end
+
+module System
+  class << self
+    alias_method :original_init, :init
+  end
+
+  def self.init
+    original_init
+
+    # TODO Save and load from file
+    $gamepad_bindings = GamepadKeyboardGlue::Defaults.clone
+  end
 end
