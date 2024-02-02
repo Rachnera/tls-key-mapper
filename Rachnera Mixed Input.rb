@@ -159,7 +159,8 @@ class Window_GamepadConfig < Window_Command
   def initialize()
     @data = $gamepad_bindings
     @grps_data = ConfigScene::Windows[:list]
-    xx = GrPS.get(@grps_data[:pos][0])
+    @grps_data[:width] = 240
+    xx = (Graphics.width - @grps_data[:width]) / 2
     yy = GrPS.get(@grps_data[:pos][1])
     super(xx,yy)
     activate
@@ -167,19 +168,29 @@ class Window_GamepadConfig < Window_Command
     self.opacity = ConfigScene::Windows[:list][:opa]
     self.z = ConfigScene::Windows[:list][:z]
     self.windowskin = Cache.system(ConfigScene::Windows[:list][:skin])
+
+    @help_window = Window_ConfigHelp.new
+    update_help
   end
 
   def window_width
-    return GrPS.get(@grps_data[:size][0])
+    @grps_data[:width]
   end
 
-  def window_height
-    return GrPS.get(@grps_data[:size][1])
+  def alignment
+    1
+  end
+
+  def spacing
+    4
+  end
+
+  def mod
+    120
   end
 
   def item_width
     full = width - standard_padding * 2 + spacing
-    mod = GrPS.get(ConfigScene::ListVisual[:padding])
     return full - mod - spacing * 2
   end
 
@@ -187,7 +198,6 @@ class Window_GamepadConfig < Window_Command
     rect = Rect.new
     rect.width = item_width
     rect.height = item_height
-    mod = GrPS.get(ConfigScene::ListVisual[:padding])
     rect.x = mod + spacing
     rect.y = index * item_height
     rect
@@ -195,7 +205,7 @@ class Window_GamepadConfig < Window_Command
 
   def make_command_list
     @data.each do |key, btn|
-      add_command(btn.to_s, key, true, btn)
+      add_command(btn.to_s, key, true, { :feature => key, :button => btn })
     end
   end
 
@@ -217,7 +227,6 @@ class Window_GamepadConfig < Window_Command
   end
 
   def draw_button_names
-    mod = GrPS.get(ConfigScene::ListVisual[:padding])
     set_font_opts(ConfigScene::ListVisual[:font][:names])
     @data.each_with_index do |(key, btn), i|
       yy = i * item_height
@@ -226,6 +235,11 @@ class Window_GamepadConfig < Window_Command
       txt = ConfigScene::Buttons[key]
       draw_text(4,yy,mod-8,item_height,txt)
     end
+  end
+
+  def update_help
+    txt = ConfigScene::ButtonHelps[current_ext[:feature]]
+    @help_window.refresh(txt)
   end
 end
 
