@@ -139,16 +139,35 @@ end
 class Scene_GamepadConfig < Scene_Base
   def start
     super
+    @msgs = []
     init_main_win
   end
 
   def init_main_win
     @window = Window_GamepadConfig.new
+    @window.set_handler(:ok, method(:on_ok))
     @window.set_handler(:cancel, method(:on_cancel))
   end
 
   def on_cancel
     return_scene
+  end
+
+  def on_ok
+    add_pop(:wait_for_key)
+  end
+
+  def add_pop(type)
+    @window.deactivate
+    @msgs << [type]
+  end
+
+  def update
+    super
+    @msg_win = nil if @msg_win && @msg_win.disposed?
+    if @msgs != [] && @msg_win.nil?
+      @msg_win = Window_GamepadConfigPop.new(@window,*@msgs.shift)
+    end
   end
 end
 
@@ -240,6 +259,134 @@ class Window_GamepadConfig < Window_Command
   def update_help
     txt = ConfigScene::ButtonHelps[current_ext[:feature]]
     @help_window.refresh(txt)
+  end
+end
+
+class Window_GamepadConfigPop < Window_Base
+  MSGS = {
+    :wait_for_key => "Press the button you wish to bind to the \eC[1]\eFNCTN\eC[0] function!",
+    :error_message => "TODO",
+  }
+
+  def initialize(list_win, type)
+    @grps_data = ConfigScene::Windows[:pop]
+    @list_win = list_win
+    @type = type
+    @list_data = @list_win.data
+    @funct = @list_win.current_ext
+
+    xx = GrPS.get(@grps_data[:pos][0])
+    yy = GrPS.get(@grps_data[:pos][1])
+    ww = GrPS.get(@grps_data[:size][0])
+    hh = GrPS.get(@grps_data[:size][1])
+    super(xx,yy,ww,hh)
+    set_font_opts(ConfigScene::PopVisual[:font])
+    self.opacity = ConfigScene::Windows[:pop][:opa]
+    self.z = ConfigScene::Windows[:pop][:z]
+    self.windowskin = Cache.system(ConfigScene::Windows[:pop][:skin])
+    close
+    self.openness = 0
+    refresh
+    open
+    until self.openness >= 255
+      update
+      SceneManager.scene.update
+    end
+  end
+
+  def get_text
+    kfunct = ConfigScene::Buttons[@funct[:feature]] # interact/cancel/etc
+    txt = Window_GamepadConfigPop::MSGS[@type].clone
+    txt.gsub!(/\eFNCTN/i) { kfunct }
+    return txt
+  end
+
+  def set_win_size_and_pos(ww,hh)
+    ww = Graphics.width if ww > Graphics.width
+    hh = Graphics.height if hh > Graphics.height
+    self.width = ww
+    self.height = hh
+    self.x = (Graphics.width-self.width) / 2
+    self.y = (Graphics.height-self.height) / 2
+    create_contents
+    set_font_opts(ConfigScene::PopVisual[:font])
+  end
+
+  def draw_information(txt)
+    texts = {}
+    lnum = 0
+    hh = standard_padding * 2
+    ww = standard_padding * 2
+    txt = txt.clone
+    txt.each_line do |line|
+      line.sub!("\n","")
+      line.sub!("\r\n","")
+      data = draw_text_ex(0,0,line)
+      hh += line_height
+      yy = lnum * line_height
+      tw = data[:x]
+      mw = tw + standard_padding * 2 + ConfigScene::PopVisual[:add_w]
+      ww = mw if mw > ww
+      texts[lnum] = {:txt => line, :y => yy, :w => tw}
+      lnum += 1
+    end
+    set_win_size_and_pos(ww,hh)
+    texts.each do |lnum,info|
+      xx = (contents_width-info[:w])/2
+      yy = info[:y]
+      draw_text_ex(xx,yy,info[:txt])
+    end
+  end
+
+  def refresh
+    txt = get_text
+    return if txt.nil?
+    draw_information(txt)
+  end
+
+  def reset_font_settings
+    # Removed!
+  end
+
+  def pop_over
+    close
+    until self.openness <= 0
+      SceneManager.scene.update
+    end
+    @list_win.activate
+    dispose
+  end
+
+  def update
+    super
+    return if self.disposed? || self.openness < 255
+    if @type == :wait_for_key
+      waiting_for_key_press
+    else
+      error_message
+    end
+  end
+
+  # Starting the wait for the input:
+  def waiting_for_key_press
+    [:A, :B, :X, :Y, :L1, :R1, :START, :SELECT, :L2, :R2].any? do |key|
+      if WolfPad.trigger?(key)
+        # TODO Check if no conflict
+        feature = @funct[:feature]
+        $gamepad_bindings[feature] = key
+        Sound.play_ok
+        @list_win.refresh
+        pop_over
+      end
+    end
+  end
+
+  def error_message
+    if Input.trigger_ex?($system[:p1][:m_confirm])
+      Sound.play_ok
+      pop_over
+      @list_win.activate
+    end
   end
 end
 
