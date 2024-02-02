@@ -19,12 +19,15 @@ Definitely not plug-and-play. Unless you happen to be adding this feature to exa
 ### What does it do?
 
 Once the scripts in, you should see two additional entries within the System Menu:
+
 ![](/docs/options.jpg)
 
 The first grants access to Cidiomar and Sixth thorough rebinding menu for the keyboard:
+
 ![](/docs/keyboard.jpg)
 
 And the second to Lone Wolf and mine equivalent for the gamepad:
+
 ![](/docs/gamepad.jpg)
 
 Usage should be straightforward. If it's not, it means I still have work to do to make it so.
