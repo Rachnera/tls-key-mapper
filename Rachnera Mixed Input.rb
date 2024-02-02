@@ -1,5 +1,10 @@
-# Foolish attempt at merging Lone Wolf, Cidiomar and Sixth's work to fully support both keyboard an gamepad
-# Override VX Ace default Input
+#==============================================================================
+# Lone Wolf Gamepad Extender / Sixth Control Configuration System Compatibility Layer
+# by Rachnera
+#------------------------------------------------------------------------------
+# Duct-tapping together Cidiomar, Lone Wolf and Sixth's hard work
+# To support in-game configuration for both keyboard an gamepad
+#==============================================================================
 
 module GamepadKeyboardGlue
   # Use VX Ace standard default values as default

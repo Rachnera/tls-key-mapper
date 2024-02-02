@@ -1,3 +1,10 @@
+#==============================================================================
+# TLS specific keyboard/gamepad configuration
+# by Rachnera
+#------------------------------------------------------------------------------
+# Ensuring there's no conflict with the numerous other scripts used by TLS
+#==============================================================================
+
 ### Default values ###
 
 # Use VX Ace standard default values as default

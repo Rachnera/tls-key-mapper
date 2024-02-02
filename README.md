@@ -2,7 +2,7 @@
 
 ## Setup
 
-Definitely not plug-and-play, unless you happen to be adding this feature to exactly _The Last Sovereign_, in which case you just need to add the ten (!) scripts stored in that repository to your game, in that exact order:
+Definitely not plug-and-play. Unless you happen to be adding this feature to exactly _The Last Sovereign_. In which case you "just" need to add the ten (!) scripts stored in that repository to your game, after all other custom scripts and in that exact order:
 1. Lone Wolf Gamepad Extender
 2. System Settings - Cidiomar
 3. Vocab Settings - Cidiomar
@@ -18,16 +18,27 @@ Definitely not plug-and-play, unless you happen to be adding this feature to exa
 
 ### What does it do?
 
-TODO with screenshots and all
+Once the scripts in, you should see two additional entries within the System Menu:
+![](/docs/options.jpg)
+
+The first grants access to Cidiomar and Sixth thorough rebinding menu for the keyboard:
+![](/docs/keyboard.jpg)
+
+And the second to Lone Wolf and mine equivalent for the gamepad:
+![](/docs/gamepad.jpg)
+
+Usage should be straightforward. If it's not, it means I still have work to do to make it so.
+
+The system creates two new custom save files to keep track of any custom configuration, namely `Controls.rvdata2` and `Gamepad.rvdata2`. Bindings can be reset to their default values by deleting these files or by using the in-game Reset Options command.
 
 ### What doesn't it do?
 
 At the moment, the following caveats are known:
-- Completely override anything defined through the F1 menu, which can be confusing.
+- Completely override any custom key binding already defined through the F1 menu.
 
 ## Customization
 
-If you wish to modify a button's name, description, usage, anything really, you first need to know its [symbolic](https://ruby-doc.org/core-1.9.1/Symbol.html) name. Here's the list of all in use:
+If you wish to modify a button's name, description, usage, anything really, you first need to know its [symbolic](https://ruby-doc.org/core-1.9.1/Symbol.html) name. Here's the list of all currently in use:
 :up, :down, :left, :right, :confirm, :cancel, :fullscreen (F5), :screenratio (F6), :mmode (walk/dash), :skip (fast text), :backlog, :party_switch, :m_toggle (only used in the shop screen; tab as a default), :m_clear (clear assigned key; only used in the keybinding menu)
 
 ### Text
@@ -42,13 +53,14 @@ ConfigScene::ButtonHelps[:screenratio] = "Better explanation of what F6 does."
 
 ### Defaults
 
-Similar to previous, but with `System::Defaults[:p1]`:
+Similar to previous, but with `System::Defaults[:p1]` and `GamepadKeyboardGlue::Defaults`:
 ```rb
 # Change the backlog to the B button as a default
 System::Defaults[:p1][:backlog] = [:LETTER_B]
+GamepadKeyboardGlue::Defaults[:party_switch] = :R2
 ```
 
-Reminder: Default values are only used if no `Controls.rvdata2` file exists yet, or when Reset Options is called.
+If a default is changed and a save file already exists, the save file will take precedence until Reset Options is hit.
 
 ## Credits
 
