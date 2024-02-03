@@ -164,6 +164,7 @@ class Scene_GamepadConfig < Scene_Base
 
   def on_cancel
     System.save_gamepad_bindings
+    @window.clean_up
     return_scene
   end
 
@@ -278,6 +279,10 @@ class Window_GamepadConfig < Window_Command
   def set_data(data)
     @data = data
     refresh
+  end
+
+  def clean_up
+    @help_window.dispose
   end
 end
 
