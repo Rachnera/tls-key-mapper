@@ -44,7 +44,7 @@ module GamepadKeyboardGlue
     return self.bindings[:confirm] if self.is_any(key, [:f_confirm, :m_confirm])
     return self.bindings[:cancel] if self.is_any(key, [:f_cancel, :m_cancel, :m_menu])
 
-    self.bindings.each do |binding, button|
+    self.bindings.reject{ |k| [:confirm, :cancel].include?(k) }.each do |binding, button|
       return button if self.is_any(key, [binding])
     end
 
