@@ -278,18 +278,7 @@ general_keys = {
 ConfigScene::Categs = { :p1_main => general_keys }.merge!(ConfigScene::Categs)
 
 module MultiKeyBind
-  FusedKeys = {
-    :up => { :name => "Up", :description => "Move character/cursor upward.", :supersede => [:f_up, :m_up] },
-    :down => { :name => "Down", :description => "Move character/cursor downward.", :supersede => [:f_down, :m_down] },
-    :left => { :name => "Left", :description => "Move character/cursor leftward.", :supersede => [:f_left, :m_left] },
-    :right => { :name => "Right", :description => "Move character/cursor rightward.", :supersede => [:f_right, :m_right] },
-    :confirm => { :name => "Interact/Select", :description => "The key used for basically anything as a default.", :supersede => [:f_confirm, :m_confirm] },
-    :cancel => { :name => "Cancel/Menu", :description => "Cancel, go back, exit.\nAlso open the menu.", :supersede => [:f_cancel, :m_cancel, :m_menu] },
-  }
-
   FusedKeys.each do |key, cf|
-    ConfigScene::Buttons[key] = cf[:name]
-    ConfigScene::ButtonHelps[key] = cf[:description]
     System::ButtonRules[:p1][key] = { :must_set => true }
     ConfigScene::Categs[:p1_main][:list].push(key)
 
