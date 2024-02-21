@@ -177,7 +177,10 @@ class Scene_System < Scene_MenuBase
 
   def command_gamepad
     unless WolfPad.plugged_in?
-      @popup_window = Window_PopupMessage.new("No gamepad detected.\n\nIf you are using a gamepad right now, and it seems to be working fine, you should be able to configure it by hitting \eC[1]F1\eC[0] and going to the Gamepad tab.")
+      @popup_window = Window_PopupMessage.new(
+        "No gamepad detected.\nIf you are using one right now, and it seems to be responding fine, you should be able to configure it by hitting \eC[1]F1\eC[0] on your keyboard and going to the Gamepad tab.",
+        max_line_numbers = 5
+      )
       @popup_window.set_handler(:ok, method(:clean_popup))
       @popup_window.set_handler(:cancel, method(:clean_popup))
       @popup_window.activate
@@ -203,9 +206,9 @@ class Scene_System < Scene_MenuBase
 end
 
 class Window_PopupMessage < Window_Selectable
-  def initialize(txt)
+  def initialize(txt, max_line_numbers)
     width = Graphics.width - 80
-    height = 8 * line_height + standard_padding * 2
+    height = max_line_numbers * line_height + standard_padding * 2
 
     super((Graphics.width - width) / 2, (Graphics.height - height) / 2, width, height)
 
