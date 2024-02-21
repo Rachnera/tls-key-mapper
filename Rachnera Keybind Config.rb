@@ -126,7 +126,6 @@ class Window_SystemOptions < Window_Command
   def draw_item(index)
     if [:keyboard, :gamepad].include?(@list[index][:symbol])
       reset_font_settings
-      change_color(normal_color, false) if @list[index][:symbol] == :gamepad and not WolfPad.plugged_in?
       rect = item_rect(index)
       contents.clear_rect(rect)
       return draw_text(item_rect_for_text(index), command_name(index), 1)
