@@ -184,6 +184,8 @@ class Scene_System < Scene_MenuBase
       @popup_window.set_handler(:ok, method(:clean_popup))
       @popup_window.set_handler(:cancel, method(:clean_popup))
       @popup_window.activate
+      @help_window.hide
+      @command_window.hide
       return
     end
 
@@ -201,6 +203,8 @@ class Scene_System < Scene_MenuBase
 
   def clean_popup
     @popup_window.close
+    @help_window.show
+    @command_window.show
     @command_window.activate
   end
 end
