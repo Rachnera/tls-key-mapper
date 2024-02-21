@@ -202,7 +202,8 @@ class Scene_System < Scene_MenuBase
   end
 
   def clean_popup
-    @popup_window.close
+    @popup_window.dispose
+    @popup_window = nil
     @help_window.show
     @command_window.show
     @command_window.activate
