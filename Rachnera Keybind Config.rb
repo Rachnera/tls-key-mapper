@@ -118,7 +118,7 @@ class Window_SystemOptions < Window_Command
 
   def ok_enabled?
     return true if current_symbol == :keyboard
-    return true if current_symbol == :gamepad and WolfPad.plugged_in?
+    return true if current_symbol == :gamepad
 
     original_ok_enabled?
   end
@@ -177,6 +177,14 @@ class Scene_System < Scene_MenuBase
   end
 
   def command_gamepad
+    unless WolfPad.plugged_in?
+      @popup_window = Window_PopupMessage.new("No gamepad detected.\n\nIf you are using a gamepad right now, and it seems to be working fine, you should be able to configure it by hitting \eC[1]F1\eC[0] and going to the Gamepad tab.")
+      @popup_window.set_handler(:ok, method(:clean_popup))
+      @popup_window.set_handler(:cancel, method(:clean_popup))
+      @popup_window.activate
+      return
+    end
+
      SceneManager.call(Scene_GamepadConfig)
   end
 
@@ -187,6 +195,23 @@ class Scene_System < Scene_MenuBase
     System.reset_gamepad_bindings
 
     original_command_reset_opts
+  end
+
+  def clean_popup
+    @popup_window.close
+    @command_window.activate
+  end
+end
+
+class Window_PopupMessage < Window_Selectable
+  def initialize(txt)
+    width = Graphics.width - 80
+    height = 8 * line_height + standard_padding * 2
+
+    super((Graphics.width - width) / 2, (Graphics.height - height) / 2, width, height)
+
+    formatted_txt = mapf_format_paragraph(txt)
+    draw_text_ex(0, 0, formatted_txt)
   end
 end
 
