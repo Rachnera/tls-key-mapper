@@ -177,10 +177,7 @@ class Scene_System < Scene_MenuBase
 
   def command_gamepad
     unless WolfPad.plugged_in?
-      @popup_window = Window_PopupMessage.new(
-        "No gamepad detected.\nIf you are using one right now, and it seems to be responding fine, you should be able to configure it by hitting \eC[1]F1\eC[0] on your keyboard and going to the Gamepad tab.",
-        max_line_numbers = 5
-      )
+      @popup_window = Window_PopupMessage_GamepadAsKeyboard.new
       @popup_window.set_handler(:ok, method(:clean_popup))
       @popup_window.set_handler(:cancel, method(:clean_popup))
       @popup_window.activate
@@ -219,6 +216,15 @@ class Window_PopupMessage < Window_Selectable
 
     formatted_txt = mapf_format_paragraph(txt)
     draw_text_ex(0, 0, formatted_txt)
+  end
+end
+
+class Window_PopupMessage_GamepadAsKeyboard < Window_PopupMessage
+  MESSAGE = "No gamepad detected.\n—\nIf you are using one right now, and it seems to be responding just fine, it might be detected as a keyboard instead (don't ask) and you might be able to configure it by using the \eC[1]Keyboard Settings\eC[0] option instead."
+  WINDOW_HEIGHT = 8
+
+  def initialize
+    super(MESSAGE, WINDOW_HEIGHT)
   end
 end
 
