@@ -105,11 +105,38 @@ class Scene_Battle < Scene_Base
     update_message_log
   end
 end
+class Window_MessageLog < Window_Base
+  def update
+    super
+    update_anime
+    return if @opening || @closing
+    dispose if close?
+    if !self.disposed? && self.open?
+      if Input.trigger_ex?($system[:p1][:m_cancel])
+        Sound.play_cancel
+        close
+      elsif Input.repeat_ex?($system[:p1][:m_up])
+        self.index = @index - 1
+      elsif Input.repeat_ex?($system[:p1][:m_down])
+        self.index = @index + 1
+      elsif Input.repeat_ex?($system[:p1][:m_left])
+        self.index = @index - 5
+      elsif Input.repeat_ex?($system[:p1][:m_right])
+        self.index = @index + 5
+      elsif Input.repeat_ex?($system[:p1][:m_pgup])
+        self.index = @index - 15
+      elsif Input.repeat_ex?($system[:p1][:m_pgdown])
+        self.index = @index + 15
+      end
+    end
+  end
+end
 ConfigScene::Buttons[:backlog] = "Backlog"
 ConfigScene::ButtonHelps[:backlog] = "Open VN-style text backlog."
 System::ButtonRules[:p1][:backlog] = { :must_set => true, :same_key => System::PresetRules[:field1] }
 ConfigScene::Categs[:p1_map][:list].push(:backlog)
 System::Defaults[:p1][:backlog] = [:LETTER_D]
+GamepadKeyboardGlue::Defaults[:backlog] = :R2
 
 # Retro-compatibility with existing party swap code and efeberk Message Visibility
 module Input
