@@ -55,6 +55,21 @@ class Scene_Battle < Scene_Base
   end
 end
 
+# Repair Yanfly Shop
+class Window_ShopNumber < Window_Selectable
+  def update_number
+    # Default behavior missed by Sixth in their script
+    change_number(1)   if Input.repeat_ex?($system[:p1][:right])
+    change_number(-1)  if Input.repeat_ex?($system[:p1][:left])
+    change_number(10)  if Input.repeat_ex?($system[:p1][:up])
+    change_number(-10) if Input.repeat_ex?($system[:p1][:down])
+
+    # Yanfly specific
+    change_number(-@max) if Input.repeat_ex?($system[:p1][:m_pgdown])
+    change_number(@max)  if Input.repeat_ex?($system[:p1][:m_pgup])
+  end
+end
+
 # Repair Hime Message Skip and ATS: Message Options scroll
 class Window_Message < Window_Base
   def skip_key_pressed?
