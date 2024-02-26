@@ -7,7 +7,7 @@
 
 ### Default values ###
 
-# Use VX Ace standard default values as default
+# Use VX Ace standard default values as baseline defaults
 # Ref: https://forums.rpgmakerweb.com/index.php?threads/rpg-maker-pc-game-controls-mv-vx-ace-vx-xp-2003-2000.140758/
 System::Defaults[:p1][:up] = System::Defaults[:p1][:f_up] = System::Defaults[:p1][:m_up] = [:UP, :NUMPAD8]
 System::Defaults[:p1][:down] = System::Defaults[:p1][:f_down] = System::Defaults[:p1][:m_down] = [:DOWN, :NUMPAD2]
@@ -15,7 +15,8 @@ System::Defaults[:p1][:left] = System::Defaults[:p1][:f_left] = System::Defaults
 System::Defaults[:p1][:right] = System::Defaults[:p1][:f_right] = System::Defaults[:p1][:m_right] = [:RIGHT, :NUMPAD6]
 System::Defaults[:p1][:confirm] = System::Defaults[:p1][:f_confirm] = System::Defaults[:p1][:m_confirm] = [:SPACE, :LETTER_Z, :RETURN]
 System::Defaults[:p1][:cancel] = System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0]
-System::Defaults[:p1][:m_pgdown] = [:LETTER_W, :NEXT]
+System::Defaults[:p1][:m_pgup] = [:LETTER_Q, :PRIOR, :NUMPAD9]
+System::Defaults[:p1][:m_pgdown] = [:LETTER_W, :NEXT, :NUMPAD3]
 
 ### Playing nice with other scripts ###
 
