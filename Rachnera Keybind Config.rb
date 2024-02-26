@@ -14,7 +14,7 @@ System::Defaults[:p1][:down] = System::Defaults[:p1][:f_down] = System::Defaults
 System::Defaults[:p1][:left] = System::Defaults[:p1][:f_left] = System::Defaults[:p1][:m_left] = [:LEFT, :NUMPAD4]
 System::Defaults[:p1][:right] = System::Defaults[:p1][:f_right] = System::Defaults[:p1][:m_right] = [:RIGHT, :NUMPAD6]
 System::Defaults[:p1][:confirm] = System::Defaults[:p1][:f_confirm] = System::Defaults[:p1][:m_confirm] = [:SPACE, :LETTER_Z, :RETURN]
-System::Defaults[:p1][:cancel] = System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0]
+System::Defaults[:p1][:cancel] = System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0, :INSERT]
 System::Defaults[:p1][:m_pgup] = [:LETTER_Q, :PRIOR, :NUMPAD9]
 System::Defaults[:p1][:m_pgdown] = [:LETTER_W, :NEXT, :NUMPAD3]
 
@@ -378,7 +378,7 @@ module System
   end
 end
 
-# Allow up to 3 different keys to be bound to a feature
+# Allow up to 3 different keys to be bound to a feature as a default
 ConfigScene::Categs.each_key do |key|
   ConfigScene::Categs[key][:max] = 3
 end
@@ -411,7 +411,7 @@ general_keys = {
   :name => "General",
   :help => "Main keys.",
   :list => [],
-  :max => 3,
+  :max => 4,
   :type => :buttons,
   :setting => [:p1],
 }
