@@ -111,7 +111,7 @@ System::ButtonRules[:p1][:backlog] = { :must_set => true, :same_key => System::P
 ConfigScene::Categs[:p1_map][:list].push(:backlog)
 System::Defaults[:p1][:backlog] = [:LETTER_D]
 
-# Retro-compatibility with existing party swap code
+# Retro-compatibility with existing party swap code and efeberk Message Visibility
 module Input
   class << self
     alias_method :original_press?, :press?
@@ -124,8 +124,17 @@ module Input
     original_press?(keys)
   end
 end
-ConfigScene::Buttons[:party_switch] = "Party switch"
-ConfigScene::ButtonHelps[:party_switch] = "Used in some specific events only."
+class Window_Message < Window_Base
+  alias previous_258_update update
+  def update
+    previous_258_update
+    if Input.trigger_ex?($system[:p1][:party_switch])
+      self.visible = !self.visible
+    end
+  end
+end
+ConfigScene::Buttons[:party_switch] = "Hide/Switch"
+ConfigScene::ButtonHelps[:party_switch] = "Hide text until advanced.\nAlso used to switch between parties during certain segments."
 System::ButtonRules[:p1][:party_switch] = { :must_set => true }
 ConfigScene::Categs[:p1_map][:list].push(:party_switch)
 System::Defaults[:p1][:party_switch] = [:LETTER_W]
