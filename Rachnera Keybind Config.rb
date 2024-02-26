@@ -46,7 +46,7 @@ class Window_PartySelect < Window_Selectable
   end
 end
 
-# Repair Hime Message Skip
+# Repair Hime Message Skip and ATS: Message Options scroll
 class Window_Message < Window_Base
   def skip_key_pressed?
     return false if $game_switches[TH::Message_Skip::Disable_Switch]
@@ -55,11 +55,27 @@ class Window_Message < Window_Base
   end
 
   def input_pause
+    return if @atsf_testing
+    $game_message.pause_se.play if $game_message.atsmo_play_sound?(:pause)
+
     self.pause = true
     wait(10)
-    Fiber.yield until Input.trigger_ex?($system[:p1][:f_confirm]+$system[:p1][:f_cancel]) || skip_key_pressed?
+    @scroll_review_max_oy = contents.height - contents_height
+    until Input.trigger_ex?($system[:p1][:f_confirm]+$system[:p1][:f_cancel]) || skip_key_pressed?
+      update_scroll_review
+      Fiber.yield
+    end
+    self.oy = @scroll_review_max_oy
     Input.update
     self.pause = false
+  end
+
+  def update_scroll_review
+    if Input.press_ex?($system[:p1][:m_up])
+      self.oy -= [4, self.oy].min
+    elsif Input.press_ex?($system[:p1][:m_down])
+      self.oy += [4, @scroll_review_max_oy - self.oy].min
+    end
   end
 end
 ConfigScene::Buttons[:skip] = "Fast text"
