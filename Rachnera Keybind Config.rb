@@ -35,6 +35,17 @@ class Game_Player < Game_Character
 end
 ConfigScene::ButtonHelps[:mmode] = "Hold to dash instead of walking or to walk instead of dashing."
 
+# Repair Yanfly Party System
+class Window_PartySelect < Window_Selectable
+  def process_handling
+    return unless open? && active
+    return process_ok       if ok_enabled?        && Input.trigger_ex?($system[:p1][:m_confirm])
+    return process_cancel   if cancel_enabled?    && Input.trigger_ex?($system[:p1][:m_cancel])
+    return process_pagedown if handle?(:pagedown) && Input.trigger_ex?($system[:p1][:m_pgdown])
+    return process_pageup   if handle?(:pageup)   && Input.trigger_ex?($system[:p1][:m_pgup])
+  end
+end
+
 # Repair Hime Message Skip
 class Window_Message < Window_Base
   def skip_key_pressed?
