@@ -46,6 +46,15 @@ class Window_PartySelect < Window_Selectable
   end
 end
 
+# Repair Yanfly Battle Engine
+class Scene_Battle < Scene_Base
+  def show_fast?
+    return true unless $game_system.animations?
+    return true if YEA::BATTLE::AUTO_FAST
+    return Input.press_ex?($system[:p1][:m_confirm])
+  end
+end
+
 # Repair Hime Message Skip and ATS: Message Options scroll
 class Window_Message < Window_Base
   def skip_key_pressed?
