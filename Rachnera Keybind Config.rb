@@ -303,6 +303,20 @@ ConfigScene::Categs[:system][:list].delete(:debug)
 System::Defaults[:p1][:d_through] = []
 ConfigScene::Categs[:p1_map][:list].delete(:d_through)
 
+module System
+  class << self
+    alias_method :original_741_init, :init
+  end
+
+  def self.init
+    original_741_init
+
+    # Hardcode debug keys as there's little point letting the player configure them
+    $system[:system][:debug] = [:F9]
+    $system[:p1][:d_through] = [:CONTROL]
+  end
+end
+
 # Allow up to 3 different keys to be bound to a feature
 ConfigScene::Categs.each_key do |key|
   ConfigScene::Categs[key][:max] = 3
