@@ -531,3 +531,13 @@ class Scene_PopupMessage_GamepadAsKeyboard < Scene_Base
     return_scene
   end
 end
+
+module TextHelper
+  def self.key_name(feature)
+    ConfigScene::Keys[$system[:p1][feature][0]][:name]
+  end
+
+  def self.btn_name(feature)
+    $gamepad_bindings[feature].to_s
+  end
+end
