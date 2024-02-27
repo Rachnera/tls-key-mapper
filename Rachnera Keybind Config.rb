@@ -278,9 +278,7 @@ class Scene_System < Scene_MenuBase
   end
 
   def command_reset_opts
-    System.load_defaults
-    save_data($system, System.check_sys_file)
-
+    System.reset_keyboard_bindings
     System.reset_gamepad_bindings
 
     original_command_reset_opts
@@ -376,6 +374,11 @@ module System
     $system[:system][:debug] = [:F9]
     $system[:p1][:d_through] = [:CONTROL]
   end
+
+  def self.reset_keyboard_bindings
+    load_defaults
+    save_data($system, System.check_sys_file)
+  end
 end
 
 # Allow up to 3 different keys to be bound to a feature as a default
@@ -432,3 +435,99 @@ module MultiKeyBind
 end
 
 ConfigScene::Categs.delete(:p1_shortcuts)
+
+### Add to start menu ###
+
+class Window_TitleCommand
+  alias original_546_make_command_list make_command_list
+  def make_command_list(*args, &block)
+    original_546_make_command_list(*args, &block)
+
+    @list.insert(
+      @list.find_index { |command| command[:name] == "Patreon" },
+      { :name => "Controls", :symbol => :controls, :enabled => true }
+    )
+  end
+end
+class Scene_Title
+  alias original_546_create_command_window create_command_window
+  def create_command_window(*args, &block)
+    original_546_create_command_window(*args, &block)
+    @command_window.set_handler(:controls, method(:open_controls_menu))
+  end
+
+  def open_controls_menu
+    SceneManager.call(Scene_InputConfigMain)
+  end
+end
+
+class Window_InputConfigMain < Window_Command
+  def initialize()
+    super(0, 0)
+    self.x = (Graphics.width - window_width) / 2
+    self.y = (Graphics.height - window_height) / 2
+  end
+
+  def make_command_list
+    add_command("Keyboard Settings", :keyboard)
+    add_command("Gamepad Settings", :gamepad)
+    add_command("Reset to default", :reset)
+    add_command("Return", :exit)
+  end
+
+  def window_width
+    240
+  end
+end
+class Scene_InputConfigMain < Scene_Base
+  def start
+    super
+    create_window
+  end
+
+  def create_window
+    @window = Window_InputConfigMain.new
+    @window.set_handler(:keyboard, method(:keyboard))
+    @window.set_handler(:gamepad, method(:gamepad))
+    @window.set_handler(:reset, method(:reset))
+    @window.set_handler(:cancel, method(:exit))
+    @window.set_handler(:exit, method(:exit))
+  end
+
+  def keyboard
+    SceneManager.call(ConfScene)
+  end
+
+  def gamepad
+    unless WolfPad.plugged_in?
+      return SceneManager.call(Scene_PopupMessage_GamepadAsKeyboard)
+    end
+
+    SceneManager.call(Scene_GamepadConfig)
+  end
+
+  def reset
+    System.reset_keyboard_bindings
+    System.reset_gamepad_bindings
+    @window.activate
+  end
+
+  def exit
+    return_scene
+  end
+end
+
+class Scene_PopupMessage_GamepadAsKeyboard < Scene_Base
+  def start
+    super
+
+    @window = Window_PopupMessage_GamepadAsKeyboard.new
+    @window.set_handler(:ok, method(:exit))
+    @window.set_handler(:cancel, method(:exit))
+    @window.activate
+  end
+
+  def exit
+    return_scene
+  end
+end
