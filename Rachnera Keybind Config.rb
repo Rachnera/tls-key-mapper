@@ -20,7 +20,7 @@ System::Defaults[:p1][:m_pgdown] = [:LETTER_W, :NEXT, :NUMPAD3]
 
 ### Playing nice with other scripts ###
 
-# Repair Yanfly autodash
+# Repair Yanfly autodash and standard debug through
 class Game_Player < Game_Character
   def dash?
     return false if @move_route_forcing
@@ -32,6 +32,10 @@ class Game_Player < Game_Character
     dash = !dash if Input.press_ex?($system[:p1][:mmode])
 
     return dash
+  end
+
+  def debug_through?
+    $TEST && Input.press_ex?($system[:p1][:d_through])
   end
 end
 ConfigScene::ButtonHelps[:mmode] = "Hold to dash instead of walking or to walk instead of dashing."
