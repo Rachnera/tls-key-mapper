@@ -337,6 +337,21 @@ System::Reload = false
 System::DPath = ""
 System::SPath = []
 
+# Rename files so that they are excluded on export
+System::FileName = "Save777.rvdata2"
+GamepadKeyboardGlue::File = "Save666.rvdata2"
+
+module DataManager
+  def self.save_file_exists?
+    # Ignore if all save files are controls files
+    if [System::FileName, GamepadKeyboardGlue::File, [System::FileName, GamepadKeyboardGlue::File].sort].include? Dir.glob('Save*.rvdata2').sort
+      return false
+    end
+
+    !Dir.glob('Save*.rvdata2').empty?
+  end
+end
+
 # Don't reserve keys for (unsupported) mouse-based movement
 System::Defaults[:p1][:f_move] = []
 ConfigScene::Categs[:p1_map][:list].delete(:f_move)

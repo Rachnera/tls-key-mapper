@@ -36,7 +36,7 @@ And the second to Lone Wolf and mine equivalent for the gamepad:
 
 Usage should be straightforward. If it's not, it means I still have work to do to make it so.
 
-The scripts create two new custom save files to keep track of any custom configuration, namely `Controls.rvdata2` and `Gamepad.rvdata2`. Bindings can be reset to their default values by deleting these files or by using the in-game _Reset Options_ command.
+The scripts create two new custom save files to keep track of any custom configuration, namely `Save777.rvdata2` and `Save666.rvdata2`. Bindings can be reset to their default values by deleting these files or by using the in-game _Reset Options_ command.
 
 ### What doesn't it do?
 
