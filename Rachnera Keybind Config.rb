@@ -164,7 +164,7 @@ ConfigScene::Buttons[:backlog] = "Backlog"
 ConfigScene::ButtonHelps[:backlog] = "Open VN-style text backlog."
 System::ButtonRules[:p1][:backlog] = { :must_set => true, :same_key => System::PresetRules[:field1] }
 ConfigScene::Categs[:p1_map][:list].push(:backlog)
-System::Defaults[:p1][:backlog] = [:LETTER_D]
+System::Defaults[:p1][:backlog] = [:LETTER_D, :LETTER_L]
 GamepadKeyboardGlue::Defaults[:backlog] = :R2
 
 # Retro-compatibility with existing party swap code and efeberk Message Visibility
@@ -193,7 +193,7 @@ ConfigScene::Buttons[:party_switch] = "Hide/Switch"
 ConfigScene::ButtonHelps[:party_switch] = "Hide text until advanced.\nAlso used to switch between parties during certain segments."
 System::ButtonRules[:p1][:party_switch] = { :must_set => true }
 ConfigScene::Categs[:p1_map][:list].push(:party_switch)
-System::Defaults[:p1][:party_switch] = [:LETTER_W]
+System::Defaults[:p1][:party_switch] = [:LETTER_W, :LETTER_H]
 GamepadKeyboardGlue::Defaults[:party_switch] = :R1
 GamepadKeyboardGlue::Scopes[:party_switch] = :field_only
 
@@ -553,7 +553,7 @@ end
 
 module TextHelper
   def self.key_name(feature)
-    ConfigScene::Keys[$system[:p1][feature][0]][:name]
+    ConfigScene::Keys[$system[:p1][feature].compact.first][:name]
   end
 
   def self.btn_name(feature)
