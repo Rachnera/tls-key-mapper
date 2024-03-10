@@ -3,6 +3,7 @@
 # by Rachnera
 #------------------------------------------------------------------------------
 # Ensuring there's no conflict with the numerous other scripts used by TLS
+# Code to open the input config menu: SceneManager.call(Scene_InputConfigMain)
 #==============================================================================
 
 ### Default values ###
