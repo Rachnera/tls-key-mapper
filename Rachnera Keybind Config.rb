@@ -344,12 +344,10 @@ GamepadKeyboardGlue::File = "Save666.rvdata2"
 
 module DataManager
   def self.save_file_exists?
-    # Ignore if all save files are controls files
-    if [System::FileName, GamepadKeyboardGlue::File, [System::FileName, GamepadKeyboardGlue::File].sort].include? Dir.glob('Save*.rvdata2').sort
-      return false
-    end
+    # Ignore "global" config files
+    files = Dir.glob('Save*.rvdata2').reject { |filename| [System::FileName, GamepadKeyboardGlue::File].include?(filename) }
 
-    !Dir.glob('Save*.rvdata2').empty?
+    !files.empty?
   end
 end
 
