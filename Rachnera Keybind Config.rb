@@ -116,7 +116,7 @@ System::Defaults[:p1][:skip] = [:CONTROL]
 GamepadKeyboardGlue::Defaults[:skip] = :L1
 GamepadKeyboardGlue::Scopes[:skip] = :field_only
 
-# Configure Lord Forte VN-style Backlog
+# Configure Lord Forte VN-style Backlog and modern algebra Quest Journal
 class Scene_Map < Scene_Base
   alias original_update update
   def update
@@ -124,6 +124,18 @@ class Scene_Map < Scene_Base
 
     @window_log = Window_MessageLog.new
     update_message_log
+  end
+
+  def update_call_quest_journal
+    if $game_map.interpreter.running?
+      @quest_journal_calling = false
+    else
+      if Input.trigger_ex?($system[:p1][:quest])
+        $game_system.quest_access_disabled || $game_party.quests.list.empty? ?
+          Sound.play_buzzer : @quest_journal_calling = true
+      end
+      call_quest_journal if @quest_journal_calling && !$game_player.moving?
+    end
   end
 end
 class Scene_Battle < Scene_Base
@@ -361,6 +373,12 @@ ConfigScene::Categs[:p1_map][:list].delete(:f_move)
   ConfigScene::Categs[:p1_shortcuts][:list].delete(key)
 end
 
+# Restore quest key, but as a standard field key
+ConfigScene::Categs[:p1_map][:list].push(:quest)
+System::Defaults[:p1][:quest] = [:LETTER_Q, :PRIOR]
+GamepadKeyboardGlue::Defaults[:quest] = :L2
+GamepadKeyboardGlue::Scopes[:quest] = :field_only
+
 [:resolution, :qload, :qsave, :help].each do |key|
   System::Defaults[:system][key] = []
   ConfigScene::Categs[:system][:list].delete(key)
@@ -387,6 +405,11 @@ module System
 
   def self.init
     original_741_init
+
+    # If new keys have been added since the file was created, setup them with their default values
+    System::Defaults[:p1].each do |key, value|
+      $system[:p1][key] = value.clone if $system[:p1][key].nil? or $system[:p1][key].empty?
+    end
 
     # Hardcode debug keys as there's little point letting the player configure them
     $system[:system][:debug] = [:F9]
