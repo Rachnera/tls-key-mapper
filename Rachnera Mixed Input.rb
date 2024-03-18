@@ -45,7 +45,7 @@ module GamepadKeyboardGlue
     return self.bindings[:cancel] if self.is_any(key, [:f_cancel, :m_cancel, :m_menu])
 
     self.bindings.reject{ |k| [:confirm, :cancel].include?(k) }.each do |binding, button|
-      return button if self.is_any(key, [binding])
+      return button if self.is_any(key, [binding]) and self.relevant_scope(binding)
     end
 
     nil
@@ -53,6 +53,13 @@ module GamepadKeyboardGlue
 
   def self.is_any(key, options)
     options.any? { |option| $system[:p1][option].include?(key) }
+  end
+
+  def self.relevant_scope(feature)
+    return SceneManager.scene_is?(Scene_Map) if Scopes[feature] == :field_only
+    return !SceneManager.scene_is?(Scene_Map) if Scopes[feature] == :menu_only
+
+    true
   end
 end
 
