@@ -116,7 +116,7 @@ System::Defaults[:p1][:skip] = [:CONTROL]
 GamepadKeyboardGlue::Defaults[:skip] = :L1
 GamepadKeyboardGlue::Scopes[:skip] = :field_only
 
-# Configure Lord Forte VN-style Backlog and modern algebra Quest Journal
+# Configure Lord Forte VN-style Backlog
 class Scene_Map < Scene_Base
   alias original_update update
   def update
@@ -124,18 +124,6 @@ class Scene_Map < Scene_Base
 
     @window_log = Window_MessageLog.new
     update_message_log
-  end
-
-  def update_call_quest_journal
-    if $game_map.interpreter.running?
-      @quest_journal_calling = false
-    else
-      if Input.trigger_ex?($system[:p1][:quest])
-        $game_system.quest_access_disabled || $game_party.quests.list.empty? ?
-          Sound.play_buzzer : @quest_journal_calling = true
-      end
-      call_quest_journal if @quest_journal_calling && !$game_player.moving?
-    end
   end
 end
 class Scene_Battle < Scene_Base
@@ -179,6 +167,45 @@ System::ButtonRules[:p1][:backlog] = { :must_set => true, :same_key => System::P
 ConfigScene::Categs[:p1_map][:list].push(:backlog)
 System::Defaults[:p1][:backlog] = [:LETTER_D, :LETTER_L]
 GamepadKeyboardGlue::Defaults[:backlog] = :R2
+
+# Restore modern algebra Quest Journal
+class Scene_Map < Scene_Base
+  def update_call_quest_journal
+    if $game_map.interpreter.running?
+      @quest_journal_calling = false
+    else
+      if Input.trigger_ex?($system[:p1][:quest])
+        $game_system.quest_access_disabled || $game_party.quests.list.empty? ?
+          Sound.play_buzzer : @quest_journal_calling = true
+      end
+      call_quest_journal if @quest_journal_calling && !$game_player.moving?
+    end
+  end
+end
+class Window_QuestData < Window_Selectable
+  def update(*args, &block)
+    super(*args, &block)
+    if open? && active && @dest_scroll_oy == self.oy
+      scroll_down if Input.press_ex?($system[:p1][:m_down])
+      scroll_up if Input.press_ex?($system[:p1][:m_up])
+    end
+    if self.oy != @dest_scroll_oy
+      mod = (@dest_scroll_oy <=> self.oy)
+      self.oy += 3*mod
+      self.oy = @dest_scroll_oy if (@dest_scroll_oy <=> self.oy) != mod
+    end
+  end
+end
+class Scene_Quest < Scene_MenuBase
+  def update_all_windows(*args, &block)
+    @quest_category_window.deactivate if @quest_category_window &&
+      QuestData::CONCURRENT_ACTIVITY && @quest_list_window.active &&
+      Input.trigger_ex?($system[:p1][:m_confirm])
+    super(*args, &block)
+    @quest_category_window.activate if @quest_category_window &&
+      QuestData::CONCURRENT_ACTIVITY && @quest_list_window.active
+  end
+end
 
 # Retro-compatibility with existing party swap code and efeberk Message Visibility
 module Input
