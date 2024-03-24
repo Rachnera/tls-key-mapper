@@ -76,6 +76,59 @@ class Window_ShopNumber < Window_Selectable
   end
 end
 
+# Repair Yanfly Options menu
+class Window_SystemOptions < Window_Command
+  # Must be a button that already does something within a menu context
+  INCREMENT_TIMES_TEN = :confirm
+
+  def change_window_tone(direction)
+    Sound.play_cursor
+    value = increment_value(direction)
+    tone = $game_system.window_tone.clone
+    case current_symbol
+    when :window_red; tone.red += value
+    when :window_grn; tone.green += value
+    when :window_blu; tone.blue += value
+    end
+    $game_system.window_tone = tone
+    draw_item(index)
+  end
+
+  def change_volume(direction)
+    Sound.play_cursor
+    value = increment_value(direction)
+    case current_symbol
+    when :volume_bgm
+      $game_system.volume_change(:bgm, value)
+      RPG::BGM::last.play
+    when :volume_bgs
+      $game_system.volume_change(:bgs, value)
+      RPG::BGS::last.play
+    when :volume_sfx
+      $game_system.volume_change(:sfx, value)
+    end
+    draw_item(index)
+  end
+
+  def change_custom_variables(direction)
+    Sound.play_cursor
+    value = increment_value(direction)
+    ext = current_ext
+    var = YEA::SYSTEM::CUSTOM_VARIABLES[ext][0]
+    minimum = YEA::SYSTEM::CUSTOM_VARIABLES[ext][4]
+    maximum = YEA::SYSTEM::CUSTOM_VARIABLES[ext][5]
+    $game_variables[var] += value
+    $game_variables[var] = [[$game_variables[var], minimum].max, maximum].min
+    draw_item(index)
+  end
+
+  def increment_value(direction)
+    value = direction == :left ? -1 : 1
+    value *= 10 if Input.press_ex?($system[:p1][INCREMENT_TIMES_TEN])
+    value
+  end
+end
+
 # Repair Hime Message Skip and ATS: Message Options scroll
 class Window_Message < Window_Base
   def skip_key_pressed?
@@ -272,24 +325,36 @@ class Window_SystemOptions < Window_Command
       case command
       when :blank
         add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
-        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+        @help_descriptions[command] = description_msg(command)
       when :window_red, :window_grn, :window_blu
         add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
-        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+        @help_descriptions[command] = description_msg(command)
       when :volume_bgm, :volume_bgs, :volume_sfx
         add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
-        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+        @help_descriptions[command] = description_msg(command)
       when :autodash, :instantmsg, :animations
         add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
-        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+        @help_descriptions[command] = description_msg(command)
       when :reset_opts, :to_title, :shutdown, :keyboard, :gamepad
         add_command(YEA::SYSTEM::COMMAND_VOCAB[command][0], command)
-        @help_descriptions[command] = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+        @help_descriptions[command] = description_msg(command)
       else
         process_custom_switch(command)
         process_custom_variable(command)
       end
     end
+  end
+
+  def description_msg(command)
+    msg = YEA::SYSTEM::COMMAND_VOCAB[command][3]
+
+    if msg.include?("SHIFT")
+      actual_key = TextHelper.key_name(Window_SystemOptions::INCREMENT_TIMES_TEN)
+      actual_button = TextHelper.btn_name(Window_SystemOptions::INCREMENT_TIMES_TEN)
+      msg = msg.gsub('SHIFT', actual_key + " (" + actual_button + " on pad)")
+    end
+
+    msg
   end
 end
 
