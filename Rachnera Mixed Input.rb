@@ -52,7 +52,7 @@ module GamepadKeyboardGlue
   end
 
   def self.is_any(key, options)
-    options.any? { |option| $system[:p1][option].include?(key) }
+    options.any? { |option| $system[:p1][option].compact.include?(key) }
   end
 
   def self.relevant_scope(feature)
