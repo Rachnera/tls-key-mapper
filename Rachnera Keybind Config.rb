@@ -129,6 +129,24 @@ class Window_SystemOptions < Window_Command
   end
 end
 
+# Repair Yanfly Battle Engine
+class Window_PartyCommand < Window_Command
+  def process_handling
+    return unless open? && active
+    return process_dir6 if Input.repeat_ex?($system[:p1][:right])
+    return super
+  end
+end
+class Window_ActorCommand < Window_Command
+  def process_handling
+    return unless open? && active
+    return process_dir4 if Input.repeat_ex?($system[:p1][:left])
+    return process_dir6 if Input.repeat_ex?($system[:p1][:right])
+    return super
+  end
+end
+
+
 # Repair Hime Message Skip and ATS: Message Options scroll
 class Window_Message < Window_Base
   def skip_key_pressed?
