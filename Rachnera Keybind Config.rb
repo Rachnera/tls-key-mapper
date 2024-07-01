@@ -18,6 +18,7 @@ System::Defaults[:p1][:confirm] = System::Defaults[:p1][:f_confirm] = System::De
 System::Defaults[:p1][:cancel] = System::Defaults[:p1][:f_cancel] = System::Defaults[:p1][:m_cancel] = System::Defaults[:p1][:m_menu] = [:ESCAPE, :LETTER_X, :NUMPAD0, :INSERT]
 System::Defaults[:p1][:m_pgup] = [:LETTER_Q, :PRIOR, :NUMPAD9]
 System::Defaults[:p1][:m_pgdown] = [:LETTER_W, :NEXT, :NUMPAD3]
+System::Defaults[:p1][:mmode] = [:SHIFT]
 
 ### Playing nice with other scripts ###
 
