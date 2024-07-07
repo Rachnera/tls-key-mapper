@@ -309,6 +309,19 @@ System::Defaults[:p1][:party_switch] = [:LETTER_W, :LETTER_H]
 GamepadKeyboardGlue::Defaults[:party_switch] = :R1
 GamepadKeyboardGlue::Scopes[:party_switch] = :field_only
 
+# Making skip/hide text works for all text boxes regardless of context
+module GamepadKeyboardGlue
+  class << self
+    alias_method :original_relevant_scope, :relevant_scope
+  end
+
+  def self.relevant_scope(feature)
+    return true if [:skip, :party_switch].include?(feature) and not $game_message.texts.empty?
+
+    original_relevant_scope(feature)
+  end
+end
+
 # Integrate with Yanfly config menu
 YEA::SYSTEM::COMMANDS.insert(YEA::SYSTEM::COMMANDS.find_index(:reset_opts), :keyboard)
 YEA::SYSTEM::COMMAND_VOCAB[:keyboard] = ["Keyboard Settings", "None", "None", "Bind controls to different/additional keys."]
